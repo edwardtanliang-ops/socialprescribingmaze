@@ -2,15 +2,10 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="ext-resource-dependency" content="assets/hospital_maze.png" data-resource-id="hospitalMaze">
-<meta name="ext-resource-dependency" content="assets/community_maze.png" data-resource-id="communityMaze">
-<meta name="ext-resource-dependency" content="assets/avatar.png" data-resource-id="avatar">
-<meta name="ext-resource-dependency" content="assets/bgm.mp3" data-resource-id="bgm">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
 <body>
-<template id="__bundler_thumbnail" data-bg-color="#1E6C67"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="#1E6C67"/><circle cx="50" cy="50" r="20" fill="#F7F0E1"/><circle cx="50" cy="50" r="8" fill="#F2B84B"/></svg></template>
 <x-dc>
 <helmet>
 <title>Caring for Mdm Wee</title>
@@ -19,19 +14,33 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="./maze-engine.js"></script>
+<script src="./image-slot.js"></script>
 <style>
 html,body{margin:0;padding:0;background:#F7F0E1;color:#1F3432;font-family:'Lexend',system-ui,sans-serif;-webkit-text-size-adjust:100%}
 *{box-sizing:border-box}
 a{color:#1E6C67}a:hover{color:#123F3C}
 button{font-family:inherit}
 button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html,body{overscroll-behavior-y:none}
 </style>
 </helmet>
 
-<div style="min-height:100dvh;height:{{ rootHeight }};overflow:{{ rootOverflow }};display:flex;flex-direction:column;background:#F7F0E1;font-size:19px;line-height:1.55">
+<div style="min-height:100dvh;height:{{ rootHeight }};overflow:{{ rootOverflow }};display:flex;flex-direction:column;background:#F7F0E1;font-size:clamp(17px,2.4vw,19px);line-height:1.55;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)">
 
   <sc-if value="{{ showHeader }}" hint-placeholder-val="{{ false }}">
-    <header style="display:flex;align-items:center;gap:16px;padding:10px 20px;background:#FFFBF3;border-bottom:1px solid #E4D9C2;flex-wrap:wrap">
+    <header style="display:flex;align-items:center;gap:12px 16px;padding:8px clamp(14px,3vw,20px);background:#FFFBF3;border-bottom:1px solid #E4D9C2;flex-wrap:wrap">
+      <sc-if value="{{ compactHeader }}">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:15px;color:#4A605D">Step {{ stepNum }} of 5 · <strong style="color:#1F3432;font-weight:600">{{ stepLabel }}</strong></div>
+          <div aria-hidden="true" style="display:flex;gap:4px">
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+              <span style="flex:1;height:6px;border-radius:3px;background:{{ s.barColor }}"></span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ wideHeader }}">
       <div style="font-weight:600;font-size:17px;color:#1E6C67;white-space:nowrap">Caring for Mdm Wee</div>
       <ol aria-label="Journey progress" style="list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:6px;flex:1;justify-content:center;flex-wrap:wrap;min-width:0">
         <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
@@ -46,19 +55,20 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
           </li>
         </sc-for>
       </ol>
+      </sc-if>
       <button onClick="{{ toggleSound }}" aria-pressed="{{ soundPressed }}" style="min-height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #B9CFC9;background:#FFFFFF;color:#1F3432;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap">{{ soundLabel }}</button>
     </header>
   </sc-if>
 
   <sc-if value="{{ isStart }}" hint-placeholder-val="{{ true }}">
-    <main style="flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:32px 20px;overflow:hidden">
+    <main style="flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:clamp(16px,4vw,32px);overflow:hidden">
       <img src="assets/community_maze.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.45;filter:saturate(0.9)">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg, rgba(247,240,225,0.55), rgba(247,240,225,0.85))"></div>
-      <div style="position:relative;max-width:640px;width:100%;background:#FFFBF3;border-radius:24px;padding:44px 40px;box-shadow:0 20px 60px rgba(31,52,50,0.18);display:flex;flex-direction:column;gap:20px;text-align:center;align-items:center">
+      <div style="position:relative;max-width:640px;width:100%;background:#FFFBF3;border-radius:clamp(18px,3vw,24px);padding:clamp(28px,6vw,44px) clamp(20px,5vw,40px);box-shadow:0 20px 60px rgba(31,52,50,0.18);display:flex;flex-direction:column;gap:clamp(16px,3vw,20px);text-align:center;align-items:center">
         <div style="font-size:15px;letter-spacing:0.08em;text-transform:uppercase;color:#1E6C67;font-weight:600">A care coordination journey</div>
         <h1 style="margin:0;font-size:clamp(34px,6vw,52px);line-height:1.1;font-weight:700;color:#1F3432;text-wrap:balance">Caring for Mdm Wee</h1>
-        <p style="margin:0;font-size:20px;color:#2E4845;text-wrap:pretty;max-width:520px">You are a Care Coordinator. Today, you'll help Mdm Wee on her journey from hospital back to her community.</p>
-        <button onClick="{{ startGame }}" style="min-height:56px;padding:0 40px;border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:20px;font-weight:600;cursor:pointer;box-shadow:0 4px 0 #123F3C" style-hover="background:#185A56">Start</button>
+        <p style="margin:0;font-size:clamp(18px,2.6vw,20px);color:#2E4845;text-wrap:pretty;max-width:520px">You are a Care Coordinator. Today, you'll help Mdm Wee on her journey from hospital back to her community.</p>
+        <button onClick="{{ startGame }}" style="width:100%;max-width:320px;min-height:56px;padding:0 40px;border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:20px;font-weight:600;cursor:pointer;box-shadow:0 4px 0 #123F3C" style-hover="background:#185A56">Start</button>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center;font-size:16px;color:#4A605D">
           <span>About 8–10 minutes</span>
           <button onClick="{{ toggleSound }}" aria-pressed="{{ soundPressed }}" style="min-height:44px;padding:0 14px;border-radius:10px;border:1.5px solid #B9CFC9;background:#FFFFFF;color:#1F3432;font-size:15px;font-weight:500;cursor:pointer">{{ soundLabel }}</button>
@@ -69,10 +79,10 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
   <sc-if value="{{ isMaze }}" hint-placeholder-val="{{ false }}">
     <main style="flex:1;display:flex;flex-direction:column;min-height:0">
-      <div style="display:flex;align-items:center;gap:12px 20px;padding:10px 20px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px 20px;padding:8px clamp(14px,3vw,20px);flex-wrap:wrap">
         <div style="display:flex;flex-direction:column;min-width:0;flex:1">
           <div style="font-size:14px;color:#4A605D;font-weight:500">{{ maze.kicker }}</div>
-          <h2 style="margin:0;font-size:22px;line-height:1.25;font-weight:600">{{ maze.title }}</h2>
+          <h2 style="margin:0;font-size:clamp(18px,3vw,22px);line-height:1.25;font-weight:600">{{ maze.title }}</h2>
         </div>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
           <div aria-label="{{ livesAria }}" style="display:flex;align-items:center;gap:6px;font-size:16px">
@@ -91,18 +101,18 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
           <button onClick="{{ dismissRotate }}" aria-label="Dismiss" style="min-width:44px;min-height:44px;border:none;background:transparent;font-size:20px;cursor:pointer;color:#1F3432">×</button>
         </div>
       </sc-if>
-      <div style="flex:1;min-height:0;display:flex;flex-direction:{{ mazeDir }};gap:12px;padding:0 16px 16px">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:{{ mazeDir }};gap:12px;padding:0 clamp(10px,2.5vw,16px) clamp(10px,2.5vw,16px)">
         <div style="position:relative;flex:1;min-height:0;min-width:0">
           <div ref="{{ stageRef }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none"></div>
 
           <sc-if value="{{ mz.intro }}">
             <div style="position:fixed;inset:0;z-index:20;display:flex;overflow:auto;background:rgba(247,240,225,0.8);padding:16px">
-              <div style="margin:auto;max-width:480px;width:100%;background:#FFFBF3;border-radius:18px;padding:28px;box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:14px">
+              <div style="margin:auto;max-width:480px;width:100%;background:#FFFBF3;border-radius:18px;padding:clamp(20px,5vw,28px);box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:14px">
                 <h3 style="margin:0;font-size:24px;font-weight:600">{{ maze.title }}</h3>
                 <p style="margin:0;text-wrap:pretty">{{ maze.goalText }}</p>
                 <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:17px;background:#EEF5F2;border-radius:12px;padding:14px 16px">
-                  <strong>Keyboard</strong><span>Arrow keys or W A S D</span>
-                  <strong>Touch</strong><span>Swipe on the map or use the D-pad</span>
+                  
+                  <strong>Touch</strong><span>Swipe on the map</span>
                   <strong>Cherry</strong><span>Blobs turn pale and back away for 6 seconds</span>
                   <strong>Dots</strong><span>Optional bonus points</span>
                 </div>
@@ -113,7 +123,7 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
           <sc-if value="{{ mz.paused }}">
             <div style="position:fixed;inset:0;z-index:20;display:flex;overflow:auto;background:rgba(247,240,225,0.8);padding:16px">
-              <div style="margin:auto;background:#FFFBF3;border-radius:18px;padding:28px 32px;box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:14px;align-items:center">
+              <div style="margin:auto;background:#FFFBF3;border-radius:18px;padding:clamp(20px,5vw,28px) clamp(24px,6vw,32px);box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:14px;align-items:center">
                 <h3 style="margin:0;font-size:24px;font-weight:600">Paused</h3>
                 <button onClick="{{ togglePause }}" style="min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">Resume</button>
               </div>
@@ -122,7 +132,7 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
           <sc-if value="{{ mz.won }}">
             <div style="position:fixed;inset:0;z-index:20;display:flex;overflow:auto;background:rgba(247,240,225,0.8);padding:16px">
-              <div style="margin:auto;max-width:440px;background:#FFFBF3;border-radius:18px;padding:28px;box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:12px;text-align:center">
+              <div style="margin:auto;max-width:440px;background:#FFFBF3;border-radius:18px;padding:clamp(20px,5vw,28px);box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:12px;text-align:center">
                 <h3 style="margin:0;font-size:26px;font-weight:600">{{ maze.winTitle }}</h3>
                 <p style="margin:0">{{ maze.winText }}</p>
                 <p style="margin:0;font-size:17px;color:#4A605D">Maze bonus: {{ mazeBonus }} points</p>
@@ -133,7 +143,7 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
           <sc-if value="{{ mz.over }}">
             <div style="position:fixed;inset:0;z-index:20;display:flex;overflow:auto;background:rgba(247,240,225,0.85);padding:16px">
-              <div style="margin:auto;max-width:440px;background:#FFFBF3;border-radius:18px;padding:28px;box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:12px;text-align:center">
+              <div style="margin:auto;max-width:440px;background:#FFFBF3;border-radius:18px;padding:clamp(20px,5vw,28px);box-shadow:0 12px 40px rgba(31,52,50,0.2);display:flex;flex-direction:column;gap:12px;text-align:center">
                 <h3 style="margin:0;font-size:26px;font-weight:600">Out of lives</h3>
                 <p style="margin:0">The blobs caught up with you. You can try the maze again or carry on with Mdm Wee's story.</p>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
@@ -147,15 +157,15 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
         <sc-if value="{{ showDpad }}">
           <div style="display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <div style="display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,64px);gap:6px">
+            <div style="display:grid;grid-template-columns:repeat(3,{{ padSize }});grid-template-rows:repeat(3,{{ padSize }});gap:6px">
               <span></span>
-              <button aria-label="Up" onPointerDown="{{ dUp }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▲</button>
+              <button aria-label="Up" onPointerDown="{{ dUp }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▲</button>
               <span></span>
-              <button aria-label="Left" onPointerDown="{{ dLeft }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">◀</button>
+              <button aria-label="Left" onPointerDown="{{ dLeft }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">◀</button>
               <span style="border-radius:50%;background:#DCE9E5;margin:14px"></span>
-              <button aria-label="Right" onPointerDown="{{ dRight }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▶</button>
+              <button aria-label="Right" onPointerDown="{{ dRight }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▶</button>
               <span></span>
-              <button aria-label="Down" onPointerDown="{{ dDown }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▼</button>
+              <button aria-label="Down" onPointerDown="{{ dDown }}" style="border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;box-shadow:0 3px 0 #123F3C">▼</button>
               <span></span>
             </div>
           </div>
@@ -165,17 +175,17 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
   </sc-if>
 
   <sc-if value="{{ isStory }}" hint-placeholder-val="{{ false }}">
-    <main style="flex:1;display:flex;justify-content:center;padding:28px 20px 48px">
-      <div style="width:100%;max-width:1180px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:32px;align-items:start">
-        <div style="width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:#EDE3CD">
+    <main style="flex:1;display:flex;justify-content:center;padding:clamp(16px,3.5vw,28px) clamp(16px,3vw,20px) clamp(32px,6vw,48px)">
+      <div style="width:100%;max-width:1180px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(20px,4vw,32px);align-items:start">
+        <div style="width:100%;aspect-ratio:4/3;border-radius:clamp(14px,2.5vw,20px);overflow:hidden;background:#EDE3CD">
           <sc-if value="{{ isWard }}">
-            <img src="assets/scene-ward.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover">
+            <image-slot id="scene-ward" shape="rect" placeholder="Ward illustration: Mdm Wee (70) seated by her bed in a community hospital ward, talking with her Care Coordinator"></image-slot>
           </sc-if>
           <sc-if value="{{ isHome }}">
-            <img src="assets/scene-home.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover">
+            <image-slot id="scene-home" shape="rect" placeholder="Home visit illustration: HDB corridor outside a 2-room flat, withered potted plants, cluttered interior through the gate"></image-slot>
           </sc-if>
           <sc-if value="{{ isGarden }}">
-            <img src="assets/scene-garden.webp" alt="" style="display:block;width:100%;height:100%;object-fit:cover">
+            <image-slot id="scene-garden" shape="rect" placeholder="Garden illustration: flourishing AAC community garden, Mdm Wee tending plants with other seniors"></image-slot>
           </sc-if>
         </div>
 
@@ -187,8 +197,8 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
 
           <sc-if value="{{ showSceneText }}">
             <div style="display:flex;flex-direction:column;gap:20px">
-              <p style="margin:0;font-size:20px;text-wrap:pretty">{{ scene.text }}</p>
-              <button onClick="{{ sceneNext }}" style="align-self:flex-start;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">Continue</button>
+              <p style="margin:0;font-size:clamp(18px,2.6vw,20px);text-wrap:pretty">{{ scene.text }}</p>
+              <button onClick="{{ sceneNext }}" style="align-self:flex-start;width:100%;max-width:340px;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">Continue</button>
             </div>
           </sc-if>
 
@@ -198,10 +208,10 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
                 <span style="font-size:15px;font-weight:600;color:#FFFFFF;background:#1F3432;border-radius:8px;padding:3px 10px">{{ quiz.num }}</span>
                 <span style="font-size:16px;font-weight:600;color:#1E6C67">{{ quiz.typeLabel }}</span>
               </div>
-              <h3 id="qprompt" style="margin:0;font-size:22px;line-height:1.4;font-weight:600;text-wrap:pretty">{{ quiz.prompt }}</h3>
+              <h3 id="qprompt" style="margin:0;font-size:clamp(19px,3vw,22px);line-height:1.4;font-weight:600;text-wrap:pretty">{{ quiz.prompt }}</h3>
               <div role="{{ quiz.groupRole }}" aria-labelledby="qprompt" style="display:flex;flex-direction:column;gap:10px">
                 <sc-for list="{{ quiz.options }}" as="o" hint-placeholder-count="4">
-                  <button role="{{ o.role }}" aria-checked="{{ o.checked }}" disabled="{{ o.disabled }}" onClick="{{ o.onClick }}" style="display:flex;align-items:flex-start;gap:14px;text-align:left;width:100%;min-height:56px;padding:14px 16px;border-radius:14px;border:2px solid {{ o.border }};background:{{ o.bg }};color:{{ o.textColor }};font-size:18px;line-height:1.45;cursor:{{ o.cursor }}">
+                  <button role="{{ o.role }}" aria-checked="{{ o.checked }}" disabled="{{ o.disabled }}" onClick="{{ o.onClick }}" style="display:flex;align-items:flex-start;gap:14px;text-align:left;width:100%;min-height:56px;padding:14px clamp(12px,2.5vw,16px);border-radius:14px;border:2px solid {{ o.border }};background:{{ o.bg }};color:{{ o.textColor }};font-size:clamp(17px,2.4vw,18px);line-height:1.45;cursor:{{ o.cursor }}">
                     <span aria-hidden="true" style="flex-shrink:0;width:26px;height:26px;margin-top:1px;border-radius:{{ o.boxRadius }};border:2px solid {{ o.boxBorder }};background:{{ o.boxBg }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700">{{ o.boxMark }}</span>
                     <span style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0">
                       <span><strong>{{ o.letter }}.</strong> {{ o.text }}</span>
@@ -218,11 +228,11 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
               </div>
 
               <sc-if value="{{ quiz.notSubmitted }}">
-                <button onClick="{{ submitQuiz }}" disabled="{{ quiz.cannotSubmit }}" style="align-self:flex-start;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:{{ quiz.submitBg }};color:#FFFFFF;font-size:19px;font-weight:600;cursor:{{ quiz.submitCursor }}">Submit</button>
+                <button onClick="{{ submitQuiz }}" disabled="{{ quiz.cannotSubmit }}" style="align-self:flex-start;width:100%;max-width:340px;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:{{ quiz.submitBg }};color:#FFFFFF;font-size:19px;font-weight:600;cursor:{{ quiz.submitCursor }}">Submit</button>
               </sc-if>
 
               <sc-if value="{{ quiz.submitted }}">
-                <div role="status" style="display:flex;flex-direction:column;gap:12px;background:#FFFBF3;border:1.5px solid #D8CDB3;border-radius:16px;padding:20px 22px">
+                <div role="status" style="display:flex;flex-direction:column;gap:12px;background:#FFFBF3;border:1.5px solid #D8CDB3;border-radius:16px;padding:clamp(16px,3.5vw,20px) clamp(16px,3.5vw,22px)">
                   <div style="font-size:16px;font-weight:600;color:#1E6C67">You earned {{ quiz.points }} of {{ quiz.max }} points</div>
                   <sc-if value="{{ quiz.fb.lead }}">
                     <p style="margin:0;text-wrap:pretty">{{ quiz.fb.lead }}</p>
@@ -238,16 +248,16 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
                     </ul>
                   </sc-if>
                 </div>
-                <button onClick="{{ quizContinue }}" style="align-self:flex-start;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">Continue</button>
+                <button onClick="{{ quizContinue }}" style="align-self:flex-start;width:100%;max-width:340px;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">Continue</button>
               </sc-if>
             </section>
           </sc-if>
 
           <sc-if value="{{ isGarden }}">
             <div style="display:flex;flex-direction:column;gap:18px">
-              <p style="margin:0;font-size:20px;text-wrap:pretty">Thanks to your thoughtful care plan, Mdm Wee has not experienced any further falls, has reclaimed her passion for gardening, and has found a vibrant community connection. She also seems more cheerful.</p>
-              <p style="margin:0;font-size:20px;text-wrap:pretty">By addressing the key <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">social determinants of health</strong> — Mdm Wee's social isolation, home environment, and community engagement — through coordinated social prescribing, <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">sustained improvements</strong> in her <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">overall wellbeing</strong> were achieved.</p>
-              <button onClick="{{ toEnd }}" style="align-self:flex-start;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">See your results</button>
+              <p style="margin:0;font-size:clamp(18px,2.6vw,20px);text-wrap:pretty">Thanks to your thoughtful care plan, Mdm Wee has not experienced any further falls, has reclaimed her passion for gardening, and has found a vibrant community connection. She also seems more cheerful.</p>
+              <p style="margin:0;font-size:clamp(18px,2.6vw,20px);text-wrap:pretty">By addressing the key <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">social determinants of health</strong> — Mdm Wee's social isolation, home environment, and community engagement — through coordinated social prescribing, <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">sustained improvements</strong> in her <strong style="background:#FCE3B0;padding:0 4px;border-radius:4px;font-weight:700">overall wellbeing</strong> were achieved.</p>
+              <button onClick="{{ toEnd }}" style="align-self:flex-start;width:100%;max-width:340px;min-height:52px;padding:0 32px;border-radius:12px;border:none;background:#1E6C67;color:#FFFFFF;font-size:19px;font-weight:600;cursor:pointer">See your results</button>
             </div>
           </sc-if>
         </div>
@@ -256,8 +266,8 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
   </sc-if>
 
   <sc-if value="{{ isEnd }}" hint-placeholder-val="{{ false }}">
-    <main style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px 20px">
-      <div style="max-width:600px;width:100%;background:#FFFBF3;border-radius:24px;padding:40px 36px;box-shadow:0 20px 60px rgba(31,52,50,0.14);display:flex;flex-direction:column;gap:22px">
+    <main style="flex:1;display:flex;align-items:center;justify-content:center;padding:clamp(16px,4vw,32px)">
+      <div style="max-width:600px;width:100%;background:#FFFBF3;border-radius:clamp(18px,3vw,24px);padding:clamp(24px,5vw,40px) clamp(20px,5vw,36px);box-shadow:0 20px 60px rgba(31,52,50,0.14);display:flex;flex-direction:column;gap:22px">
         <div style="display:flex;flex-direction:column;gap:6px;text-align:center">
           <div style="font-size:15px;letter-spacing:0.08em;text-transform:uppercase;color:#1E6C67;font-weight:600">Journey complete</div>
           <h2 style="margin:0;font-size:clamp(30px,5vw,40px);line-height:1.15;font-weight:700">Your score</h2>
@@ -273,7 +283,7 @@ button:focus-visible{outline:3px solid #F2A93B;outline-offset:2px}
           </sc-for>
         </div>
         <p style="margin:0;font-size:16px;color:#4A605D;text-align:center;text-wrap:pretty">Quiz points: 10 for each answer option judged correctly. Maze bonus: dots, cherries and reaching the exit.</p>
-        <button onClick="{{ playAgain }}" style="align-self:center;min-height:56px;padding:0 40px;border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:20px;font-weight:600;cursor:pointer;box-shadow:0 4px 0 #123F3C">Play again</button>
+        <button onClick="{{ playAgain }}" style="align-self:center;width:100%;max-width:320px;min-height:56px;padding:0 40px;border-radius:14px;border:none;background:#1E6C67;color:#FFFFFF;font-size:20px;font-weight:600;cursor:pointer;box-shadow:0 4px 0 #123F3C">Play again</button>
       </div>
     </main>
   </sc-if>
@@ -363,13 +373,14 @@ const initial = () => ({
 });
 
 class Component extends DCLogic {
-  state = { ...initial(), sound: false, vw: 1200, vh: 800, coarse: false, rotateDismissed: false };
+  state = { ...initial(), sound: false, vw: window.innerWidth || 1200, vh: window.innerHeight || 800, coarse: window.matchMedia('(pointer: coarse)').matches, rotateDismissed: false };
   engine = null;
 
   componentDidMount() {
     this.onResize = () => this.setState({ vw: window.innerWidth, vh: window.innerHeight, coarse: window.matchMedia('(pointer: coarse)').matches });
     this.onResize();
     window.addEventListener('resize', this.onResize);
+    window.addEventListener('orientationchange', this.onResize);
     this.onVis = () => { if (document.hidden && this.state.mazeState === 'play') this.togglePause(); };
     document.addEventListener('visibilitychange', this.onVis);
     this.onKey = (e) => {
@@ -379,14 +390,17 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this.onKey);
   }
   componentDidUpdate(pp, ps) {
-    if (ps.sound !== this.state.sound) {
-      if (!this.bgm) { this.bgm = new Audio((window.__resources && window.__resources.bgm) || 'assets/bgm.mp3'); this.bgm.loop = true; this.bgm.volume = 0.35; }
-      if (this.state.sound) this.bgm.play().catch(() => {}); else this.bgm.pause();
-    }
+
+  }
+  setMusic(on) {
+    if (!this.bgm) { this.bgm = new Audio((window.__resources && window.__resources.bgm) || 'assets/bgm.mp3'); this.bgm.loop = true; this.bgm.volume = 0.35; this.bgm.setAttribute('playsinline', ''); }
+    if (on) { const pr = this.bgm.play(); if (pr) pr.catch(err => console.warn('bgm', err)); } else this.bgm.pause();
+    this.setState({ sound: on });
   }
   componentWillUnmount() {
     if (this.bgm) this.bgm.pause();
     window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('orientationchange', this.onResize);
     window.removeEventListener('keydown', this.onKey);
     document.removeEventListener('visibilitychange', this.onVis);
     if (this.engine) this.engine.destroy();
@@ -479,15 +493,18 @@ class Component extends DCLogic {
         dotBorder: done || cur ? '#1E6C67' : '#B9C7C3',
         labelColor: done || cur ? '#1F3432' : '#5B6F6C',
         weight: cur ? 600 : 400,
-        lineColor: i <= idx ? '#1E6C67' : '#C9D5D1'
+        lineColor: i <= idx ? '#1E6C67' : '#C9D5D1',
+        barColor: done ? '#1E6C67' : cur ? '#6FAFA8' : '#DAD3C2'
       };
     });
 
     const isMaze = s.screen === 'maze1' || s.screen === 'maze2';
     const maze = MAZES[s.screen] || MAZES.maze1;
     const portrait = s.vh > s.vw;
-    const showDpad = s.coarse || s.vw < 760;
-    const mazeDir = showDpad && !portrait && s.vh < 600 ? 'row' : 'column';
+    const showDpad = false;
+    const mazeDir = showDpad && !portrait ? 'row' : 'column';
+    const isPhone = Math.min(s.vw, s.vh) < 600;
+    const padSize = s.coarse && !isPhone ? '76px' : Math.min(s.vw, s.vh) < 380 ? '56px' : '64px';
 
     const isStory = ['ward', 'home', 'garden'].includes(s.screen);
     const scene = SCENES[s.screen] || SCENES.ward;
@@ -545,13 +562,16 @@ class Component extends DCLogic {
 
     return {
       showHeader: s.screen !== 'start',
+      compactHeader: s.vw < 960, wideHeader: s.vw >= 960,
+      stepNum: Math.min(idx + 1, 5), stepLabel: idx >= 5 ? 'Complete' : (STEPS[idx] || ''),
+      padSize, showKeysHelp: !s.coarse,
       rootHeight: isMaze ? '100dvh' : 'auto', rootOverflow: isMaze ? 'hidden' : 'visible',
       steps,
       soundLabel: s.sound ? 'Sound: On' : 'Sound: Off', soundPressed: s.sound ? 'true' : 'false',
-      toggleSound: () => this.setState(st => ({ sound: !st.sound })),
+      toggleSound: () => this.setMusic(!this.state.sound),
       isStart: s.screen === 'start', isMaze, isStory, isEnd: s.screen === 'end',
       isWard: s.screen === 'ward', isHome: s.screen === 'home', isGarden: s.screen === 'garden',
-      startGame: () => this.go('maze1'),
+      startGame: () => { if (!this.state.sound) this.setMusic(true); this.go('maze1'); },
       maze, mz: { intro: s.mazeState === 'intro', paused: s.mazeState === 'paused', won: s.mazeState === 'won', over: s.mazeState === 'over' },
       livesList: [0, 1, 2].map(i => ({ color: i < s.lives ? '#D5413A' : '#D6CFC0' })),
       livesAria: `${s.lives} of 3 lives left`,
@@ -560,7 +580,7 @@ class Component extends DCLogic {
       togglePause: this.togglePause, beginMaze: this.beginMaze, retryMaze: this.retryMaze, afterMaze: this.afterMaze,
       stageRef: this.stageRef,
       showDpad, mazeDir,
-      showRotate: isMaze && s.coarse && portrait && !s.rotateDismissed,
+      showRotate: isMaze && s.coarse && isPhone && portrait && !s.rotateDismissed,
       dismissRotate: () => this.setState({ rotateDismissed: true }),
       dUp: (e) => this.dpad(e, 'up'),
       dDown: (e) => this.dpad(e, 'down'),
